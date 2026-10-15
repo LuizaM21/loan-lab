@@ -1,5 +1,7 @@
+using System.Runtime.InteropServices.JavaScript;
 using DoseLab.Application;
 using Xunit;
+using Xunit.Sdk;
 
 namespace DoseLab.UnitTests;
 
@@ -37,5 +39,37 @@ public class TaperScheduleCalculatorShould
         Assert.Equal(700m, schedule.TotalMg);
     }
 
-    // Add your own [Fact] or [Theory] methods below this line.
+    [Fact]
+    public void IncludeTheRemainderDosageInTheFinalWeek() {
+        //setup
+        var startingDailyDoseMg = 10m;
+        var weekCount = 3;
+        
+        //execute
+        var schedule = TaperScheduleCalculator.Calculate(startingDailyDoseMg, weekCount);
+        
+        Assert.Equal(3, schedule.Weeks.Count);
+        
+        Assert.Equal(10m, schedule.Weeks[0].DailyDoseMg);
+        Assert.Equal(70m, schedule.Weeks[0].WeeklyTotalMg);
+        Assert.Equal(70m, schedule.Weeks[0].CumulativeTotalMg);
+        
+        // verify the remainder dosage is included in the final week
+        Assert.Equal(3.34m, schedule.Weeks[2].DailyDoseMg);
+        Assert.Equal(23.38m, schedule.Weeks[2].WeeklyTotalMg);
+        Assert.Equal(140.07m, schedule.Weeks[2].CumulativeTotalMg);
+        Assert.Equal(140.07m, schedule.TotalMg);
+    }
+    
+    [Fact]
+    public void ReturnErrorWhenWeekCountIsLessThanOne() {
+        //setup
+        var dailyDose = 10m;
+        var weekCount = 0;
+        
+        //execute & verify 
+        Assert.Throws<ArgumentOutOfRangeException>(() => TaperScheduleCalculator.Calculate(dailyDose, weekCount));
+        
+    }
+
 }
