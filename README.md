@@ -74,7 +74,7 @@ Open http://localhost:5173. You should see two plans: Maria Ionescu and Andrei S
 | UI (Playwright) | `npx playwright install chromium` (once), then `npm run test:e2e` | `frontend` | 1 |
 | Performance smoke | `k6 run perf/smoke.js` (API must be running) | repo root | 1 |
 
-Playwright starts the API and the UI itself, or reuses them if they already run. To use other ports: `LAB_API_PORT=5181 LAB_UI_PORT=5182 npm run test:e2e`.
+Playwright starts the API and the UI itself or reuses them if they already run. To use other ports: `LAB_API_PORT=5181 LAB_UI_PORT=5182 npm run test:e2e`.
 
 GitHub Actions runs all three levels on every push: `.github/workflows/ci.yml`.
 
