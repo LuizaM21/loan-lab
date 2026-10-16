@@ -7,6 +7,7 @@ namespace DoseLab.UnitTests;
 
 public class TaperScheduleCalculatorShould
 {
+    //Equivalence partitioning
     [Fact]
     public void LowerTheDailyDoseByTheSameStepEveryWeek()
     {
@@ -20,7 +21,6 @@ public class TaperScheduleCalculatorShould
         var schedule = TaperScheduleCalculator.Calculate(startingDailyDoseMg, weekCount);
 
         // verify
-
         Assert.Equal(4, schedule.Weeks.Count);
 
         Assert.Equal(1, schedule.Weeks[0].Week);
@@ -38,7 +38,8 @@ public class TaperScheduleCalculatorShould
 
         Assert.Equal(700m, schedule.TotalMg);
     }
-
+    
+    //Equivalence partitioning
     [Fact]
     public void IncludeTheRemainderDosageInTheFinalWeek() {
         //setup
@@ -48,6 +49,7 @@ public class TaperScheduleCalculatorShould
         //execute
         var schedule = TaperScheduleCalculator.Calculate(startingDailyDoseMg, weekCount);
         
+        //verify
         Assert.Equal(3, schedule.Weeks.Count);
         
         Assert.Equal(10m, schedule.Weeks[0].DailyDoseMg);

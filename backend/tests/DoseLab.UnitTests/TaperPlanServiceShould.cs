@@ -28,9 +28,8 @@ public class TaperPlanServiceShould
         Assert.Equal(4, saved.Plan.WeekCount);
         Assert.Equal("TP-0001", saved.Plan.ReferenceNumber);
     }
-
-    // Add your own [Fact] or [Theory] methods below this line.
-    // boundary test for a week interval
+    
+    // Boundary value analysis 
     [Theory]
     [InlineData(0)]
     [InlineData(-1)]
@@ -81,6 +80,37 @@ public class TaperPlanServiceShould
         Assert.Empty(service.List()); //a rejected plan must not be saved
             
     }
+
+    //  Boundary value analysis 
+    [Theory]
+    // maximum start daily dosage medication
+    [InlineData("STR", 80)]
+    [InlineData("CLM", 40)]
+    [InlineData("NRV", 20)]
     
+    // minimum start daily dosage medication
+    [InlineData("STR", 1)]
+    [InlineData("CLM", 1)]
+    [InlineData("NRV", 1)]
+    public void SavePlanWithValidDailyDosageMedication( string medicationCode, decimal dailyDosage)
+    {
+        // setup
+        var repository = new InMemoryTaperPlanRepository(SimulatedLatency.None);
+        var catalog = new InMemoryMedicationCatalog(SimulatedLatency.None);
+        var service = new TaperPlanService(repository, catalog, TimeProvider.System);
+        
+        //execute
+        service.Create("Ana Pop", medicationCode, dailyDosage, 4);
+        var actualPans = service.List();
+        
+        //verify
+        var storedPlan = Assert.Single(actualPans);
+        Assert.NotEmpty(storedPlan.Plan.ReferenceNumber);
+        Assert.Equal("Ana Pop", storedPlan.Plan.PatientName);
+        Assert.Equal(medicationCode, storedPlan.Plan.MedicationCode);
+        Assert.Equal(dailyDosage, storedPlan.Plan.StartingDailyDoseMg);
+        Assert.Equal(4, storedPlan.Plan.WeekCount);
+
+    }
 
 }
