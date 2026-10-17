@@ -134,10 +134,25 @@ Ask your mentor to turn on one backend bug, or run `instructor/bug.sh random 1`.
 ## Check yourself
 
 1. What does WebApplicationFactory run, and what does it not run?
+It runs the app in memory inside the test process Program.cs startup.
+It does not run a real network server, a browser, a frontend. Requests go through an in-memory HttpClient.
 2. Which status code for: create, missing key, unknown id, bad input?
+Created -201
+Missing key -401
+Unknown id -404
+Bad input -400
 3. Why should you not assert "the list has exactly 3 plans" in a shared fixture?
+The count List depends on which tests ran before this one. 
+The test would pass or fail depending on order, which makes it flaky.
+Instead, use a unique patient name (a Guid) and look for your plan with Contains or DoesNotContain. 
+Alternatively, compare before and after within the same test (exercise 6), or start a fresh app per test when you truly need a clean state.
 4. What is a test harness? Show the one you wrote.
+A test harness is the code that sets up the system for testing: 
+it starts the system, configures it, swaps in test versions of dependencies, provides data, and cleans up.
 5. Why test that a rejected save did not save anything?
+Because the status code is only what the server said, not what it did. 
+Even if the server said "bad input", it might have saved the plan anyway. 
+We need to check the database if the bad input is stored or not.
 
 ## Say it in the interview
 
