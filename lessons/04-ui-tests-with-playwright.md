@@ -131,11 +131,27 @@ Write all tests in `frontend/e2e/taper-plans.spec.ts`.
 ## Check yourself
 
 1. Why is `getByRole` better than a CSS selector?
+They survive CSS and layout changes, they read clearly in the test, and they double as an accessibility check. 
+Use getByRole for buttons, tables and headings, and getByLabel for form fields.
 2. What does auto-wait do? What does a web-first assertion do?
-3. Give three causes of flaky tests, with a fix for each.
+Auto-wait: before every action like click or fill, Playwright waits until the element is attached, visible, enabled and stable. 
+Web-first assertions retry the condition, any condition (text, count, hidden), until it’s true or the timeout passes. 
+That’s needed because the UI updates asynchronously. A one-shot check, like reading textContent() and comparing, runs too early and causes flaky tests.
+3. Give three causes of flaky tests, with a fix for each. 
+Usage of fixed times instead of waiting for the element to be visible. Solution: use web-first assertions.
+Usage of shared test data. Solution: use unique names and setup through the API.
+Race Condition. When a test assumes an operation is complete but is still running. Solution: Await asynchronous operations. synchronize with the actual completion state.
+Weak locators (fix: use identifier like role and label)
+Unpredictable backend (fix: mock the network for UI-only checks)
 4. Why use unique names when a test saves data?
+Because we can run the test again and the records do conflict with an existent one that has the same name.
+Parallel runs: Chromium and Firefox workers saved plans at the same moment, into the same API.
 5. Why create test data through the API?
+Creating data through the API is much faster than clicking through forms.
+Compared with inserting into the database directly, the API applies the real validation, so the test data is realistic.
 6. When would you mock the network in a UI test?
+When we want to create a specific scenario that is not possible to achieve through the API. 
+When a backend state is needed, and it’s hard to produce on demand: a 500, a timeout, an empty list, a slow response, or unusual data.
 
 ## Say it in the interview
 
