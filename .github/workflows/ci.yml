@@ -40,7 +40,7 @@ jobs:
           cache: npm
           cache-dependency-path: frontend/package-lock.json
       - run: npm ci
-      - run: npx playwright install --with-deps chromium
+      - run: npx playwright install --with-deps chromium firefox
       - name: Run Playwright
         run: npm run test:e2e
       - name: Keep Playwright report
