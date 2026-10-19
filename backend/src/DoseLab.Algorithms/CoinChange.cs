@@ -1,7 +1,7 @@
 namespace DoseLab.Algorithms;
 
 /// <summary>
-/// Fewest coins that add up to an amount. Each coin value may be used many times.
+/// Finds the fewest coins needed to make a given amount. Returns -1 if it's impossible.
 /// Dynamic programming: best[sum] is the fewest coins that make that sum.
 /// Time O(amount × coins). Space O(amount). Returns -1 when the amount cannot be made.
 /// </summary>
@@ -20,7 +20,7 @@ public static class CoinChange
         }
 
         var impossible = amount + 1;
-        var best = new int[amount + 1];
+        var best = new int[impossible];
         Array.Fill(best, impossible);
         best[0] = 0;
 

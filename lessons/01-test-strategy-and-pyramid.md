@@ -2,7 +2,7 @@
 
 Time: 45 minutes.
 
-Goal: explain where each kind of test belongs, and write a one-page test strategy.
+Goal: explain where each kind of test belongs and write a one-page test strategy.
 
 ## Learn
 

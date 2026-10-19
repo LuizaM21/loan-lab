@@ -154,11 +154,24 @@ Change one expected value in a test you wrote. Run. See the failure message. Put
 ## Check yourself
 
 1. Why `decimal` and not `double` for doses?
+    R: Decimal stores the values in decimal form while double stores the values in binary form. 
+        For example, 0.1 + 0.2 = 0.30000000000000004 in double, but 0.1 + 0.2 = 0.3 in decimal.
+        For this data type the rounding comes from the code and not from the computer.
 2. What is the difference between `[Fact]` and `[Theory]`?
+    R: A `[Fact]` test has no parameters. A `[Theory]` test has parameters. 
+       For [Theory], we have [InLineData] if we want to test a few values, 
+       or [MemberData] if we want to test many values with a specific kind of data. For this type the inputs are evaluated and decimals are accepted.
 3. Which four values do you test for the range 1–20 with boundary value analysis?
+       for value 1 -> [0.99] will be rejected, [1] will be accepted, [1.01] will be accepted, 
+       for value 20 -> [19.99] will be accepted, [20] will be accepted [20.01] (will be rejected). 
 4. What is a fake? Give an example from this repo.
+        Fake vs stub - Fake -> A simpler working version with real behavior. InMemoryTaperPlanRepository is a fake. 
+                     - Stub -> Returns a fixed canned answer. FixedClock: GetUtcNow() always returns the same moment
 5. Why must a test never use the real current date?
+   R: The real current date can change, and tests should be repeatable. 
+      The test becomes flaky if it uses the real current date.
 6. A test is green. How do you know it can fail?
+    R: Apply Red/Green method. If a test is green, it can fail if the code changes in a way that breaks the test. Mutation testing can be done (Stryker.NET) changes the code.
 
 ## Say it in the interview
 
