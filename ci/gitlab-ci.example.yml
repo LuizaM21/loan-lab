@@ -31,6 +31,7 @@ e2e-tests:
   script:
     - cd frontend
     - npm ci
+    - npx playwright install firefox
     - npm run test:e2e
   artifacts:
     when: always
