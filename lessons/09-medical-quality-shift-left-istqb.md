@@ -57,7 +57,7 @@ The seven principles:
 3. Early testing saves time and money.
 4. Defects cluster together.
 5. Tests wear out (the "pesticide paradox"): the same tests stop finding new bugs.
-6. Testing is context dependent (medical software ≠ a game).
+6. Testing is context-dependent (medical software ≠ a game).
 7. Absence-of-errors fallacy: bug-free but useless is still a failure.
 
 Other words:

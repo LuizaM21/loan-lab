@@ -77,10 +77,32 @@ If you have Claude Code (or Cursor), use it. If not, do steps 1, 4, and 5 by han
 ## Check yourself
 
 1. What is the difference between `CLAUDE.md`, a skill, and a subagent?
+Claude.md is a file with rules and facts that the agent must obey. It can be used to guide the agent's behavior and decision-making. The file with rules is always loaded. 
+A skill is a reusable procedure, a written instruction for the agent to follow, not automation by itself. The agent reads and follows the instructions. The skill is loaded only when the task matches the description.
+A subagent is a separate agent with its own instructions, tools, and fresh context. The subagent is independent and also keeps the main conversation's context clean. 
+
 2. What is context engineering? Give two rules you would put in `CLAUDE.md`.
+Context engineering is guidance not to give the entire project context but to give the right context. 
+Too little and it guesses; too much and the important parts get diluted.
+Rule one: Do not create test cases if you don't have requirements/specification/expected results. 
+Rule two: Use synthetic data only. Never real patient data. 
+Rule three: Always ask users for input to create test cases.
+
 3. Why can AI-generated tests be dangerous? How do you check them?
+AI can create tests that pass buggy code. -> Check: Give a rule and expected values mot the code.
+AI can create tests that don't cover any cases. -> Make a review on the cases that cover any edge cases.
+AI can invent APIs that don't exist.  -> Run the test and check the API exists.
+AI can use the wrong APIs in a test. -> Create a rule in Cluade.md plus review the used API.
+AI can modify tests to pass when it shouldn't. -> Check the test fails when the behavior is broken.
+
 4. How could you use an AI agent inside a CI pipeline?
+In CI I’d run the agent in headless mode as a pipeline step. 
+When tests fail, it uses a triage skill to classify the failure and post a draft bug report on the pull request, 
+so the team starts from a summary instead of a raw log. It could also review new tests or summarise performance results. 
+But it only advises: a human makes the decision and owns the outcome.
+
 5. What data must never go into an AI prompt in a medical company?
+Real patient data, passwords, encrypted keys, API keys, code structure, Health data is a special category under GDPR, production data.
 
 ## Say it in the interview
 

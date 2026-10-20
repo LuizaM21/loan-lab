@@ -40,35 +40,40 @@ Be honest about experience. Show that you learn fast and think in risks.
 ## STAR stories
 
 Prepare 5 stories. **S**ituation, **T**ask, **A**ction, **R**esult (with a number if possible).
-Situation: Our services ran on AWS ECS, which was supposed to scale up automatically when latency or CPU went above 50% in a short time.
-Task: Make sure the system could handle a sudden load increase.
-Action: I ran a stress test, and the service degraded without scaling up. I looked at how the scaling rules were defined. They checked latency and CPU only once every 15 minutes, so a spike was over, or had already hurt users, before the rule even noticed it. I changed the rule to evaluate 3 samples within 5 minutes, then reran the same stress test to confirm.
-Result: The infrastructure scaled up in time and handled the load (from 7 tasks to 14 tasks). 
+[S]ituation: Our services ran on AWS ECS, which was supposed to scale up automatically when latency or CPU went above 50% in a short time. 
+[T]ask: Make sure the system could handle a sudden load increase and up-scale if needed.
+[A]ction: I designed a spike test to reproduce the surge and watched the CloudWatch alarms behind the scaling policy. 
+The alarm required two data-points at 15-minute periods, so it needed about 30 minutes of sustained load. 
+A real spike was over before it ever triggered the alarm. 
+I recommended shortening the evaluation to three 5-minute data-points and re-ran the test to validate it.
+[R]esult: On the re-run the alarm fired, ECS added tasks, and the system stayed responsive. The infrastructure scaled up in time and handled the load (from 7 tasks to 14 tasks). 
 
 1. A bug you found that really mattered.
 The bug was described in the STAR story 
 2. A disagreement with a developer or product owner, and how you solved it.
-   S: After a release, several APIs got slower, and the developer whose change was in that build didn’t think his code was the cause.
-   T: Find out objectively whether the change was responsible.
-   A: Instead of arguing, I ran the same load test on the build before and after his change, in the same environment. The results showed the degradation came with his build. In the monitoring we saw the DB connection pool fully used, so other APIs were waiting for a free connection. I shared the results with him and we went through them together.
-   R: He reverted, fixed the connection handling, and performance went back to the baseline.
+   [S]: After a release, several APIs got slower, and the developer whose change was in that build didn’t think his code was the cause.
+   [T]: Find out objectively whether the change was responsible.
+   [A]: Instead of arguing, I ran the same load test on the build before and after his change, in the same environment. 
+        The results showed the degradation came with his build. In the monitoring we saw the DB connection pool fully used, 
+        so other APIs were waiting for a free connection. I shared the results with him and we went through them together.
+   [R]: He reverted, fixed the connection handling, and performance went back to the baseline.
 3. A process you improved (faster tests, better bug reports, fewer escaped bugs).
-   S: Every performance test needed a large volume of realistic data, and each person created it from scratch.
-   T: Cut the setup time for everyone.
-   A: I populated a database through the API, so the data passed the same validations as real data, then saved it as a snapshot that any developer could restore before a test.
-   R: Setup went from [7 working days] to [30 minutes]. [All the development teams use it].
+   [S]: Every performance test needed a large volume of realistic data, and each person created it from scratch.
+   [T]: Cut the setup time for everyone.
+   [A]: I populated a database through the API, so the data passed the same validations as real data, then saved it as a snapshot that any developer could restore before a test.
+   [R]: Setup went from [7 working days] to [30 minutes]. [All the development teams use it].
 4. A time you learned something new fast (this lab is one).
-   S: I’m applying for a C# test automation role, but my daily stack is Scala and Gatling.
-   T: Get productive in .NET testing quickly.
-   A: In about two weeks I built a full suite on a .NET and React app: xUnit unit tests, API tests with WebApplicationFactory, Playwright UI tests, k6 load tests, and a GitHub Actions pipeline. I learned C# by mapping it to what I knew from Scala, such as records and case classes, or LINQ and collections.
-   R: The whole suite runs in CI on Chromium and Firefox. [Today I even found a bug. The firefox test could not run on CI because of a missing firefox installer. Read the error: understand the problem and introduce the missing image for firefox. Ran again and the pipeline was green again]
+   [S]: I’m applying for a C# test automation role, but my daily stack is Scala and Gatling.
+   [T]: Get productive in .NET testing quickly.
+   [A]: In about two weeks I built a full suite on a .NET and React app: xUnit unit tests, API tests with WebApplicationFactory, Playwright UI tests, k6 load tests, and a GitHub Actions pipeline. I learned C# by mapping it to what I knew from Scala, such as records and case classes, or LINQ and collections.
+   [R]: The whole suite runs in CI on Chromium and Firefox. [Today I even found a CI configuration issue. The firefox test could not run on CI because of a missing firefox installer. Read the error: understand the problem and introduce the missing image for firefox. Ran again and the pipeline was green again]
 5. A time requirements were unclear, and what you did.
-   S: A client was migrating to our core banking platform. The request was “size the infrastructure so the migration finishes in max 4 hours,” but we had no details on their data.
-   T: Find the right infrastructure size so the migration fits the client’s time window.
-   A: I asked for the inputs that drive the load: their product configuration, the number of active clients and accounts, and historical transactions per account. 
+   [S]: A client was migrating to our core banking platform. The request was “size the infrastructure so the migration finishes in max 4 hours,” but we had no details on their data.
+   [T]: Find the right infrastructure size so the migration fits the client’s time window.
+   [A]: I asked for the inputs that drive the load: their product configuration, the number of active clients and accounts, and historical transactions per account. 
       These told me which APIs would be called and how many times. [If something was missing: “Where a number wasn’t available, I wrote down my assumption and got the team to confirm it.”] 
       I turned that into a load model, ran short tests to measure resource use, and extrapolated the size, then confirmed it with a test at the target size.
-   R: The migration finished in under [3] hours, within the [4]-hour window, on the infrastructure I recommended.
+   [R]: The migration finished in under [3] hours, within the [4]-hour window, on the infrastructure I recommended.
 
 
 ## Bug report template
@@ -110,7 +115,7 @@ Test strategy:
 | Explain the testing pyramid. When do you break it? | 01 |
     Test pyramid consists of the base level represented by:
     many unit tests at the bottom -> (fast, cheap, verbose, stable, point straight to the breaking code line)
-    fewer integration tests in the middle, 
+    fewer integration tests in the middle (API tests), 
     and a small number of UI end-to-end tests on top -> (Flaky, slow, more fragile)
     The reason is cost and speed. Unit tests run in milliseconds, rarely break by accident, 
     and tell you exactly what’s wrong. UI tests are slow and more fragile, 
@@ -125,7 +130,7 @@ Test strategy:
     - Test case 4: Starting dose = 20.01m (invalid)
 
 | How do you test an API? What do you check? | 03 |
-    Check: Status Code, Headers, and Response Body and the state (perform a GET after a POST was done) to confirm what was actually stored  
+    Check: Status Code, Headers, and Response Body and the state (perform a GET after a POST was done) to confirm what was actually stored,  
     I would also check the response time and ensure that the API is returning the expected data.
     Negative testing: invalid inputs will give a 400: Bad Request with a clear error message, 
                         missing or wrong API key should retrieve 401: Unauthorized,
@@ -144,7 +149,7 @@ I also use fixtures to share setup and teardown code between tests.
 Usage of specific tags like @smoke @regression @featureName. This way the CI can a fast subset on each pull request and the full suite nightly, across browser projects.
 
 | Walk me through a performance test. What do you report? | 05 |
-For a load test type:
+A load test type for a new feature inside a custom build:
 1. Emulate a production like environment and data (use synthetic data at production volume/setup the same properties/enable features)
 2. Apply an expected load (concurrent users/sec) for 20 ~ 30 minutes to follow if the system can sustain a normal load and what is the resource consumption for that load. 
 3. Run a baseline load test to identify the current performance of the system.
@@ -152,16 +157,16 @@ For a load test type:
 5. In a 20-min test duration (created in Gatling with open-model injection profile), the first step is to apply the load with a ramp up -> hold the steady state -> then ramp down. 
 6. Identify the infra usage for that period of time and check if the system can sustain the load. Check the CPU, Memory, DB connections, Network usage. 
 7. Compare with Expected SLA's only for the steady load period: Response time. Ex: P95 < 100ms, Error Rate < 1%, Throughput > 1000 req/sec
-Passed: P95 < 100ms: 95% of the total requests have Response time under 100ms
+Passed: P95 < 100 ms: 95% of the total requests have Response time under 100 ms
 Passed: Error Rate < 1%: Fewer than 1% of all requests failed.
 Passed: Throughput > 1000 req/sec: During the steady state, the system completed on average 1,150 requests per second. 
-8. Analyze the report and identify the bottlenecks and recommend improvements 
+8. Analyze the results, identify the bottlenecks, and recommend improvements 
 9. Create a report with the results and share it with the team
 
 | How do you find a bottleneck? | 05 |
 I start from the symptom and work down. In the load test results I find where the p95 spikes or where throughput stops growing 
-as load increases. Then I take that time window into the APM, Dynatrace in my current job, 
-and check what saturated at the same moment: CPU, memory and garbage collection, the DB connection pool, slow queries.
+as the load increases. Then I take that time window into the APM tool, Dynatrace in my current job, 
+and check what saturated at the same moment: CPU, Memory, and triggered garbage collection events, the DB connection pool, slow queries.
 From there I drill down: which API, which service behind it, how many calls per request, 
 how long it waits for a DB connection. A typical finding is high-connection acquisition time: the service holds connections 
 too long, the pool runs out, and every other API waits. I also make sure the load generator itself isn’t the limit. 
