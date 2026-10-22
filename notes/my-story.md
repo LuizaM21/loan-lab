@@ -1,6 +1,6 @@
 I’m a performance test engineer with about ten years in testing. 
-For the last six and a half years I’ve been at Mambu, a core banking platform, 
-running API load tests with Gatling to find performance degradation and drive optimizations. 
+For the last 7 years I’ve been at Mambu, a core banking platform, 
+creating and running API load tests with Gatling to find performance degradation and drive optimizations. 
 Most recently I built a performance regression framework that acts as a quality gate for release candidates: 
 - it covers our most critical APIs and validates P95 response time, error rate and throughput against SLAs.
 

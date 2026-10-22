@@ -9,7 +9,7 @@ Goal: tell your story, answer the likely questions, and show your work.
 Write it in `notes/my-story.md`, then say it out loud 5 times.
 
 1. Who you are: years in testing, the domains you know.
-I’m a performance test engineer with 10 years in testing. For the last six and a half years I’ve been at Mambu, 
+I’m a performance test engineer with 10 years in testing. For the last 7 years I’ve been at Mambu, 
 a core banking platform, where I load-test the system for large client migrations: 
 I identified the critical APIs, build the load model in a Gatling framework with SCALA, and use Grafana, AWS metrics, 
 and Dynatrace to size the infrastructure so a migration finishes on time. 
